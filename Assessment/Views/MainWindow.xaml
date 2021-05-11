@@ -20,7 +20,7 @@
             </MenuItem>
         </Menu>
         <Image DockPanel.Dock="Left" Source="{Binding DicomBitmap, Converter={StaticResource BitmapToImageSourceConverter}}"/>
-        <DataGrid ItemsSource="{Binding Dictionary}" AutoGenerateColumns="False" HorizontalAlignment="Right">
+        <DataGrid ItemsSource="{Binding Dictionary}" AutoGenerateColumns="False" HorizontalAlignment="Stretch">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Bezeichnung" Binding="{Binding Key}"/>
                 <DataGridTextColumn Header="Daten" Binding="{Binding Value}"/>                

@@ -67,7 +67,7 @@ namespace Assessment.ViewModels
         /// </summary>
         public ICommand MenuFileSaveAsCommand => _menuFileSaveAsCommand ??= new DelegateCommand(() =>
         {
-
+            _fileService.SaveImageFile();
         });
     }
 }
