@@ -8,6 +8,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="fo-dicom" Version="4.0.7" />
+    <PackageReference Include="fo-dicom.Drawing" Version="4.0.7" />
+    <PackageReference Include="fo-dicom.NetCore" Version="4.0.7" />
     <PackageReference Include="Prism.DryIoc" Version="8.0.0.1909" />
+    <PackageReference Include="System.Collections" Version="4.3.0" />
   </ItemGroup>
 </Project>
