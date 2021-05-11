@@ -26,7 +26,7 @@ namespace Assessment.Services
         /// </summary>
         /// <param name="fileName">The file name</param>
         /// <returns>The completed task</returns>
-        Task SaveImageFile(string fileName = null);
+        Task SaveImageFileAsync(string fileName = null);
     }
 
     /// <summary>
@@ -49,7 +49,7 @@ namespace Assessment.Services
             return result.HasFlag(DialogResult.OK) ? folderBrowserDialog.SelectedPath : null;
         }
 
-        public Task SaveImageFile(string fileName)
+        public Task SaveImageFileAsync(string fileName)
         {
             Microsoft.Win32.SaveFileDialog saveFileDialog = new();
             saveFileDialog.DefaultExt = ".png";

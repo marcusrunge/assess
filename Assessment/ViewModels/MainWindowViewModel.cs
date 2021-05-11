@@ -1,13 +1,9 @@
 ﻿using Assessment.Services;
-using Dicom;
 using Prism.Commands;
 using Prism.Mvvm;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Reflection;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Assessment.ViewModels
 {
@@ -65,9 +61,9 @@ namespace Assessment.ViewModels
         /// <summary>
         /// Executes when file save as menu item was selected
         /// </summary>
-        public ICommand MenuFileSaveAsCommand => _menuFileSaveAsCommand ??= new DelegateCommand(() =>
+        public ICommand MenuFileSaveAsCommand => _menuFileSaveAsCommand ??= new DelegateCommand(async () =>
         {
-            _fileService.SaveImageFile();
+            await _fileService.SaveImageFileAsync();
         });
     }
 }

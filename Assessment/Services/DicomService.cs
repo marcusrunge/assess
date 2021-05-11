@@ -4,11 +4,7 @@ using Dicom.IO.Buffer;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace Assessment.Services
 {
@@ -38,7 +34,7 @@ namespace Assessment.Services
                 {
                     var file = await DicomFile.OpenAsync(path);
                     var image = new DicomImage(path);
-                    var bitmap = image.RenderImage().AsSharedBitmap();                    
+                    var bitmap = image.RenderImage().AsSharedBitmap();
                     var walker = new DicomDatasetWalker(file.FileMetaInfo);
                     walker.Walk(new DumpWalker((dictionary) => callback?.Invoke(dictionary, bitmap)));
                 }

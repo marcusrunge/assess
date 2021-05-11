@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Interop;
@@ -21,7 +15,7 @@ namespace Assessment.Converter
         [DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DeleteObject([In] IntPtr hObject);
-        
+
         /// <summary>
         /// <c>Convert</c> converts a <see cref="Bitmap"/> into a WPF <see cref="ImageSource"/>
         /// </summary>
@@ -37,7 +31,7 @@ namespace Assessment.Converter
                 case null:
                     return value;
                 case Bitmap bitmap:
-                    {                        
+                    {
                         var handle = bitmap.GetHbitmap();
                         try
                         {
