@@ -1,0 +1,20 @@
+﻿<Window x:Class="Assessment.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        Title="{Binding Title}" Height="350" Width="525" >
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Datei">
+                <MenuItem Header="_Öffnen" Command="{Binding MenuFileOpenCommand}"/>
+                <MenuItem Header="_Speichern" Command="{Binding MenuFileSaveCommand}"/>
+                <MenuItem Header="_Speichern unter" Command="{Binding MenuFileSaveAsCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Werkzeuge">
+                
+            </MenuItem>
+        </Menu>
+        
+    </DockPanel>
+</Window>
