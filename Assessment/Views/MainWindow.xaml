@@ -20,10 +20,12 @@
             </MenuItem>
         </Menu>
         <Image DockPanel.Dock="Left" Source="{Binding DicomBitmap, Converter={StaticResource BitmapToImageSourceConverter}}"/>
-        <DataGrid ItemsSource="{Binding Dictionary}" AutoGenerateColumns="False" HorizontalAlignment="Stretch">
+        <DataGrid ItemsSource="{Binding DicomMetaInfos}" AutoGenerateColumns="False" HorizontalAlignment="Stretch">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Bezeichnung" Binding="{Binding Key}"/>
-                <DataGridTextColumn Header="Daten" Binding="{Binding Value}"/>                
+                <DataGridTextColumn Header="Bezeichnung" Binding="{Binding Tag}"/>
+                <DataGridTextColumn Header="Code" Binding="{Binding Code}"/>
+                <DataGridTextColumn Header="Länge" Binding="{Binding Length}"/>
+                <DataGridTextColumn Header="Inhalt" Binding="{Binding Value}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

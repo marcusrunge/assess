@@ -1,4 +1,5 @@
-﻿using Dicom;
+﻿using Assessment.Models;
+using Dicom;
 using Dicom.Imaging;
 using Dicom.IO.Buffer;
 using System;
@@ -19,14 +20,14 @@ namespace Assessment.Services
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        Task ProcessFileAsync(string path, Action<Dictionary<string, string>, Bitmap> callback);
+        Task ProcessFileAsync(string path, Action<List<DicomMetaInfo>, Bitmap> callback);
     }
 
     public class DicomService : IDicomService
     {
         public DicomService() => ImageManager.SetImplementation(WinFormsImageManager.Instance);
 
-        public async Task ProcessFileAsync(string path, Action<Dictionary<string, string>, Bitmap> callback)
+        public async Task ProcessFileAsync(string path, Action<List<DicomMetaInfo>, Bitmap> callback)
         {
             if (!string.IsNullOrWhiteSpace(path))
             {
@@ -35,8 +36,8 @@ namespace Assessment.Services
                     var file = await DicomFile.OpenAsync(path);
                     var image = new DicomImage(path);
                     var bitmap = image.RenderImage().AsSharedBitmap();
-                    var walker = new DicomDatasetWalker(file.FileMetaInfo);
-                    walker.Walk(new DumpWalker((dictionary) => callback?.Invoke(dictionary, bitmap)));
+                    var walker = new DicomDatasetWalker(file.Dataset);
+                    walker.Walk(new DumpWalker((dicomMetaInfos) => callback?.Invoke(dicomMetaInfos, bitmap)));
                 }
                 catch { }
             }
@@ -44,8 +45,8 @@ namespace Assessment.Services
 
         private class DumpWalker : IDicomDatasetWalker
         {
-            private Dictionary<string, string> _dictionary;
-            private Action<Dictionary<string, string>> _onEndWalk;
+            private Action<List<DicomMetaInfo>> _onEndWalk;
+            private List<DicomMetaInfo> _dicomMetaInfos;
             private int _level = 0;
 
             public int Level
@@ -55,23 +56,22 @@ namespace Assessment.Services
                 {
                     _level = value;
                     Indent = string.Empty;
-                    for (int i = 0; i < _level; i++)
-                        Indent += "    ";
+                    for (int i = 0; i < _level; i++) Indent += "    ";
                 }
             }
 
             private string Indent { get; set; }
 
-            public DumpWalker(Action<Dictionary<string, string>> onEndWalk)
+            public DumpWalker(Action<List<DicomMetaInfo>> onEndWalk)
             {
                 _onEndWalk = onEndWalk;
-                _dictionary = new Dictionary<string, string>();
+                _dicomMetaInfos = new List<DicomMetaInfo>();
             }
 
             public bool OnBeginFragment(DicomFragmentSequence fragment)
             {
                 var tag = string.Format("{0}{1}  {2}", Indent, fragment.Tag.ToString().ToUpper(), fragment.Tag.DictionaryEntry.Name);
-                _dictionary.Add(tag, string.Empty);
+                _dicomMetaInfos.Add(new DicomMetaInfo { Tag = tag, Code = fragment.ValueRepresentation.Code, Length = string.Empty, Value = string.Empty });
                 Level++;
                 return true;
             }
@@ -79,7 +79,7 @@ namespace Assessment.Services
             public bool OnBeginSequence(DicomSequence sequence)
             {
                 var tag = string.Format("{0}{1}  {2}", Indent, sequence.Tag.ToString().ToUpper(), sequence.Tag.DictionaryEntry.Name);
-                _dictionary.Add(tag, string.Empty);
+                _dicomMetaInfos.Add(new DicomMetaInfo { Tag = tag, Code = "SQ", Length = string.Empty, Value = string.Empty });
                 Level++;
                 return true;
             }
@@ -87,7 +87,7 @@ namespace Assessment.Services
             public bool OnBeginSequenceItem(DicomDataset dataset)
             {
                 var tag = string.Format("{0}Sequence Item:", Indent);
-                _dictionary.Add(tag, string.Empty);
+                _dicomMetaInfos.Add(new DicomMetaInfo { Tag = tag, Code = string.Empty, Length = string.Empty, Value = string.Empty });
                 Level++;
                 return true;
             }
@@ -105,12 +105,13 @@ namespace Assessment.Services
                     var name = uid.Name;
                     if (name != "Unknown") value = string.Format("{0} ({1})", value, name);
                 }
-                _dictionary.Add(tag, value);
+                _dicomMetaInfos.Add(new DicomMetaInfo { Tag = tag, Code = element.ValueRepresentation.Code, Length = element.Length.ToString(), Value = value });
                 return true;
             }
 
             public Task<bool> OnElementAsync(DicomElement element)
             {
+                var tag = string.Format("{0}{1}  {2}", Indent, element.Tag.ToString().ToUpper(), element.Tag.DictionaryEntry.Name);
                 string value = "<large value not displayed>";
                 if (element.Length <= 2048) value = string.Join("\\", element.Get<string[]>());
                 if (element.ValueRepresentation == DicomVR.UI && element.Count > 0)
@@ -119,7 +120,7 @@ namespace Assessment.Services
                     var name = uid.Name;
                     if (name != "Unknown") value = string.Format("{0} ({1})", value, name);
                 }
-                _dictionary.Add(element.Tag.DictionaryEntry.Name, value);
+                _dicomMetaInfos.Add(new DicomMetaInfo { Tag = tag, Code = element.ValueRepresentation.Code, Length = element.Length.ToString(), Value = value });
                 return Task.FromResult(true);
             }
 
@@ -141,12 +142,12 @@ namespace Assessment.Services
                 return true;
             }
 
-            public void OnEndWalk() => _onEndWalk?.Invoke(_dictionary);
+            public void OnEndWalk() => _onEndWalk?.Invoke(_dicomMetaInfos);
 
             public bool OnFragmentItem(IByteBuffer item)
             {
                 var tag = string.Format("{0}Fragment", Indent);
-                _dictionary.Add(tag, string.Empty);
+                _dicomMetaInfos.Add(new DicomMetaInfo { Tag = tag, Code = string.Empty, Length = item.Size.ToString(), Value = string.Empty });
                 return true;
             }
 

@@ -1,4 +1,5 @@
-﻿using Assessment.Services;
+﻿using Assessment.Models;
+using Assessment.Services;
 using Prism.Commands;
 using Prism.Mvvm;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Assessment.ViewModels
         private string _title = "Assessment";
         private ICommand _menuFileOpenCommand, _menuFileSaveCommand, _menuFileSaveAsCommand;
         private Bitmap _dicomBitmap;
-        private Dictionary<string, string> _dictionary;
+        private List<DicomMetaInfo> _dicomMetaInfos;
 
         public MainWindowViewModel(IFileService fileService, IDicomService dicomService)
         {
@@ -33,9 +34,9 @@ namespace Assessment.ViewModels
         public Bitmap DicomBitmap { get { return _dicomBitmap; } set { SetProperty(ref _dicomBitmap, value); } }
 
         /// <summary>
-        /// Gets or sets the record
+        /// Gets or sets the DICOM meta infos
         /// </summary>
-        public Dictionary<string, string> Dictionary { get { return _dictionary; } set { SetProperty(ref _dictionary, value); } }
+        public List<DicomMetaInfo> DicomMetaInfos { get { return _dicomMetaInfos; } set { SetProperty(ref _dicomMetaInfos, value); } }
 
         /// <summary>
         /// Executes when file open menu item was selected
@@ -43,10 +44,10 @@ namespace Assessment.ViewModels
         public ICommand MenuFileOpenCommand => _menuFileOpenCommand ??= new DelegateCommand(async () =>
         {
             var path = _fileService.OpenFile();
-            await _dicomService.ProcessFileAsync(path, (dictionary, bitmap) =>
+            await _dicomService.ProcessFileAsync(path, (dicomMetaInfos, bitmap) =>
             {
                 DicomBitmap = bitmap;
-                Dictionary = dictionary;
+                DicomMetaInfos = dicomMetaInfos;
             });
         });
 
