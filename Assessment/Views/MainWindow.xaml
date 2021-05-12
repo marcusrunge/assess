@@ -17,6 +17,7 @@
             </MenuItem>
             <MenuItem Header="_Werkzeuge">
                 <MenuItem Header="_Kantenerkennung" Command="{Binding EdgeDetectionCommand}"/>
+                <MenuItem Header="_Kontrastkorrektur" Command="{Binding ContrastCorrectionCommand}"/>
             </MenuItem>
         </Menu>
         <Image DockPanel.Dock="Left" Source="{Binding DicomBitmap, Converter={StaticResource BitmapToImageSourceConverter}}"/>

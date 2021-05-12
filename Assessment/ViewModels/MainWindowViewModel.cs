@@ -14,7 +14,7 @@ namespace Assessment.ViewModels
         private readonly IDicomService _dicomService;
         private readonly IImageProcessingService _imageProcessingService;
         private string _title = "Assessment", _fileName;
-        private ICommand _menuFileOpenCommand, _menuFileSaveCommand, _menuFileSaveAsCommand, _edgeDetectionCommand;
+        private ICommand _menuFileOpenCommand, _menuFileSaveCommand, _menuFileSaveAsCommand, _edgeDetectionCommand, _contrastCorrectionCommand;
         private Bitmap _dicomBitmap;
         private List<DicomMetaInfo> _dicomMetaInfos;
 
@@ -81,6 +81,14 @@ namespace Assessment.ViewModels
         public ICommand EdgeDetectionCommand => _edgeDetectionCommand ??= new DelegateCommand(() =>
         {
             DicomBitmap = _imageProcessingService.DetectEdges(DicomBitmap);
+        });
+
+        /// <summary>
+        /// Executes when contrast correction menu item was selected
+        /// </summary>
+        public ICommand ContrastCorrectionCommand => _contrastCorrectionCommand ??= new DelegateCommand(() =>
+        {
+            DicomBitmap = _imageProcessingService.CorrectContrast(DicomBitmap);
         });
     }
 }
