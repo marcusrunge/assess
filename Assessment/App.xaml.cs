@@ -19,6 +19,7 @@ namespace Assessment
         {
             containerRegistry.Register<IFileService, FileService>();
             containerRegistry.RegisterSingleton<IDicomService, DicomService>();
+            containerRegistry.Register<IImageProcessingService, ImageProcessingService>();
         }
     }
 }

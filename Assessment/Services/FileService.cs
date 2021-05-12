@@ -23,7 +23,7 @@ namespace Assessment.Services
         /// <returns>The folder path</returns>
         string OpenFolder();
         /// <summary>
-        /// <c>SaveImageFile</c> saves an image to file
+        /// <c>SaveImageFileAsync</c> asynchronously saves an image to file
         /// </summary>
         /// <param name="fileName">The file name</param>
         /// <returns>The completed task</returns>

@@ -13,7 +13,7 @@ namespace Assessment.ViewModels
         private readonly IFileService _fileService;
         private readonly IDicomService _dicomService;
         private string _title = "Assessment", _fileName;
-        private ICommand _menuFileOpenCommand, _menuFileSaveCommand, _menuFileSaveAsCommand;
+        private ICommand _menuFileOpenCommand, _menuFileSaveCommand, _menuFileSaveAsCommand, _edgeDetectionCommand;
         private Bitmap _dicomBitmap;
         private List<DicomMetaInfo> _dicomMetaInfos;
 
@@ -71,6 +71,14 @@ namespace Assessment.ViewModels
         public ICommand MenuFileSaveAsCommand => _menuFileSaveAsCommand ??= new DelegateCommand(async () =>
         {
             await _fileService.SaveImageFileAsync(FileName);
+        });
+
+        /// <summary>
+        /// Executes when edge detection menu item was selected
+        /// </summary>
+        public ICommand EdgeDetectionCommand => _edgeDetectionCommand ??= new DelegateCommand(() =>
+        {
+
         });
     }
 }

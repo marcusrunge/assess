@@ -16,7 +16,7 @@
                 <MenuItem Header="_Speichern unter" Command="{Binding MenuFileSaveAsCommand}"/>
             </MenuItem>
             <MenuItem Header="_Werkzeuge">
-                
+                <MenuItem Header="_Kantenerkennung" Command="{Binding EdgeDetectionCommand}"/>
             </MenuItem>
         </Menu>
         <Image DockPanel.Dock="Left" Source="{Binding DicomBitmap, Converter={StaticResource BitmapToImageSourceConverter}}"/>

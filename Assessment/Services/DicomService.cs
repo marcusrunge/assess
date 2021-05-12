@@ -23,7 +23,7 @@ namespace Assessment.Services
         /// <returns></returns>
         Task ProcessDicomFileAsync(string path, Action<List<DicomMetaInfo>, Bitmap, string> callback);
         /// <summary>
-        /// <cExportDicomFileAsync></c> exports the processed DICOM file to a selected file format
+        /// <cExportDicomFileAsync></c> asynchronously exports the processed DICOM file to a selected file format
         /// </summary>
         /// <returns>The completed task</returns>
         Task ExportDicomFileAsync(string path, ImageFormat imageFormat);
