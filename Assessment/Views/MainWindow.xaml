@@ -12,7 +12,7 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_Datei">
                 <MenuItem Header="_Öffnen" Command="{Binding MenuFileOpenCommand}"/>
-                <MenuItem Header="_Speichern" Command="{Binding MenuFileSaveCommand}"/>
+                <!--<MenuItem Header="_Speichern" Command="{Binding MenuFileSaveCommand}"/>-->
                 <MenuItem Header="_Speichern unter" Command="{Binding MenuFileSaveAsCommand}"/>
             </MenuItem>
             <MenuItem Header="_Werkzeuge">

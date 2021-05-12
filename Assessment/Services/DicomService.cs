@@ -5,6 +5,7 @@ using Dicom.IO.Buffer;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Threading.Tasks;
 
 namespace Assessment.Services
@@ -20,24 +21,39 @@ namespace Assessment.Services
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        Task ProcessFileAsync(string path, Action<List<DicomMetaInfo>, Bitmap> callback);
+        Task ProcessDicomFileAsync(string path, Action<List<DicomMetaInfo>, Bitmap, string> callback);
+        /// <summary>
+        /// <cExportDicomFileAsync></c> exports the processed DICOM file to a selected file format
+        /// </summary>
+        /// <returns>The completed task</returns>
+        Task ExportDicomFileAsync(string path, ImageFormat imageFormat);
     }
 
     public class DicomService : IDicomService
     {
+        private DicomImage _dicomImage;
+
         public DicomService() => ImageManager.SetImplementation(WinFormsImageManager.Instance);
 
-        public async Task ProcessFileAsync(string path, Action<List<DicomMetaInfo>, Bitmap> callback)
+        public async Task ExportDicomFileAsync(string path, ImageFormat imageFormat)
+        {
+            if (_dicomImage != null)
+            {
+                await Task.Run(() => _dicomImage.RenderImage().AsSharedBitmap().Save(path, imageFormat));
+            }
+        }
+
+        public async Task ProcessDicomFileAsync(string path, Action<List<DicomMetaInfo>, Bitmap, string> callback)
         {
             if (!string.IsNullOrWhiteSpace(path))
             {
                 try
                 {
                     var file = await DicomFile.OpenAsync(path);
-                    var image = new DicomImage(path);
-                    var bitmap = image.RenderImage().AsSharedBitmap();
+                    _dicomImage = new DicomImage(path);
+                    var bitmap = _dicomImage.RenderImage().AsSharedBitmap();
                     var walker = new DicomDatasetWalker(file.Dataset);
-                    walker.Walk(new DumpWalker((dicomMetaInfos) => callback?.Invoke(dicomMetaInfos, bitmap)));
+                    walker.Walk(new DumpWalker((dicomMetaInfos) => callback?.Invoke(dicomMetaInfos, bitmap, file.File.Name.Substring(file.File.Name.LastIndexOf('\\') + 1))));
                 }
                 catch { }
             }

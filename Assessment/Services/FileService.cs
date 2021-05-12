@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -35,6 +36,10 @@ namespace Assessment.Services
     /// </summary>
     public class FileService : IFileService
     {
+        private IDicomService _dicomService;
+
+        public FileService(IDicomService dicomService) => _dicomService = dicomService;
+
         public string OpenFile()
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new();
@@ -49,9 +54,10 @@ namespace Assessment.Services
             return result.HasFlag(DialogResult.OK) ? folderBrowserDialog.SelectedPath : null;
         }
 
-        public Task SaveImageFileAsync(string fileName)
+        public async Task SaveImageFileAsync(string fileName)
         {
             Microsoft.Win32.SaveFileDialog saveFileDialog = new();
+            saveFileDialog.FileName = fileName;
             saveFileDialog.DefaultExt = ".png";
             saveFileDialog.Filter = "BMP (*.bmp)|*.bmp|PNG (*.png)|*.png|JPG (*.jpg)|*.jpg";
             var result = saveFileDialog.ShowDialog();
@@ -61,16 +67,18 @@ namespace Assessment.Services
                 switch (extension.ToLower())
                 {
                     case ".bmp":
+                        await _dicomService.ExportDicomFileAsync(saveFileDialog.FileName, ImageFormat.Bmp);
                         break;
                     case ".jpg":
+                        await _dicomService.ExportDicomFileAsync(saveFileDialog.FileName, ImageFormat.Jpeg);
                         break;
                     case ".png":
+                        await _dicomService.ExportDicomFileAsync(saveFileDialog.FileName, ImageFormat.Png);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(extension);
                 }
             }
-            return Task.CompletedTask;
         }
     }
 }

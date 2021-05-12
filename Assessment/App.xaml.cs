@@ -18,7 +18,7 @@ namespace Assessment
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.Register<IFileService, FileService>();
-            containerRegistry.Register<IDicomService, DicomService>();
+            containerRegistry.RegisterSingleton<IDicomService, DicomService>();
         }
     }
 }

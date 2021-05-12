@@ -12,7 +12,7 @@ namespace Assessment.ViewModels
     {
         private readonly IFileService _fileService;
         private readonly IDicomService _dicomService;
-        private string _title = "Assessment";
+        private string _title = "Assessment", _fileName;
         private ICommand _menuFileOpenCommand, _menuFileSaveCommand, _menuFileSaveAsCommand;
         private Bitmap _dicomBitmap;
         private List<DicomMetaInfo> _dicomMetaInfos;
@@ -39,15 +39,21 @@ namespace Assessment.ViewModels
         public List<DicomMetaInfo> DicomMetaInfos { get { return _dicomMetaInfos; } set { SetProperty(ref _dicomMetaInfos, value); } }
 
         /// <summary>
+        /// Gets or sets the file name
+        /// </summary>
+        public string FileName { get { return _fileName; } set { SetProperty(ref _fileName, value); } }
+
+        /// <summary>
         /// Executes when file open menu item was selected
         /// </summary>
         public ICommand MenuFileOpenCommand => _menuFileOpenCommand ??= new DelegateCommand(async () =>
         {
             var path = _fileService.OpenFile();
-            await _dicomService.ProcessFileAsync(path, (dicomMetaInfos, bitmap) =>
+            await _dicomService.ProcessDicomFileAsync(path, (dicomMetaInfos, bitmap, fileName) =>
             {
                 DicomBitmap = bitmap;
                 DicomMetaInfos = dicomMetaInfos;
+                FileName = fileName;
             });
         });
 
@@ -64,7 +70,7 @@ namespace Assessment.ViewModels
         /// </summary>
         public ICommand MenuFileSaveAsCommand => _menuFileSaveAsCommand ??= new DelegateCommand(async () =>
         {
-            await _fileService.SaveImageFileAsync();
+            await _fileService.SaveImageFileAsync(FileName);
         });
     }
 }
