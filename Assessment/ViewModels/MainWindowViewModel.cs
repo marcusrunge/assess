@@ -12,15 +12,17 @@ namespace Assessment.ViewModels
     {
         private readonly IFileService _fileService;
         private readonly IDicomService _dicomService;
+        private readonly IImageProcessingService _imageProcessingService;
         private string _title = "Assessment", _fileName;
         private ICommand _menuFileOpenCommand, _menuFileSaveCommand, _menuFileSaveAsCommand, _edgeDetectionCommand;
         private Bitmap _dicomBitmap;
         private List<DicomMetaInfo> _dicomMetaInfos;
 
-        public MainWindowViewModel(IFileService fileService, IDicomService dicomService)
+        public MainWindowViewModel(IFileService fileService, IDicomService dicomService, IImageProcessingService imageProcessingService)
         {
             _fileService = fileService;
             _dicomService = dicomService;
+            _imageProcessingService = imageProcessingService;
         }
 
         /// <summary>
@@ -51,7 +53,7 @@ namespace Assessment.ViewModels
             var path = _fileService.OpenFile();
             await _dicomService.ProcessDicomFileAsync(path, (dicomMetaInfos, bitmap, fileName) =>
             {
-                DicomBitmap = bitmap;
+                DicomBitmap = (Bitmap)bitmap.Clone();
                 DicomMetaInfos = dicomMetaInfos;
                 FileName = fileName;
             });
@@ -78,7 +80,7 @@ namespace Assessment.ViewModels
         /// </summary>
         public ICommand EdgeDetectionCommand => _edgeDetectionCommand ??= new DelegateCommand(() =>
         {
-
+            DicomBitmap = _imageProcessingService.DetectEdges(DicomBitmap);
         });
     }
 }

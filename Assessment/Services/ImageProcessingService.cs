@@ -1,6 +1,5 @@
-﻿using System;
+﻿using AForge.Imaging.Filters;
 using System.Drawing;
-using System.Threading.Tasks;
 
 namespace Assessment.Services
 {
@@ -11,17 +10,21 @@ namespace Assessment.Services
     public interface IImageProcessingService
     {
         /// <summary>
-        /// <c>DetectEdgesAsync</c> asynchronously detects edges
+        /// <c>DetectEdges</c> detects edges
         /// </summary>
         /// <param name="bitmap"></param>
         /// <returns>The <see cref="Bitmap"/> with detected edges</returns>
-        Task<Bitmap> DetectEdgesAsync(Bitmap bitmap);
+        Bitmap DetectEdges(Bitmap bitmap);
     }
     public class ImageProcessingService : IImageProcessingService
     {
-        public Task<Bitmap> DetectEdgesAsync(Bitmap bitmap)
+        public Bitmap DetectEdges(Bitmap bitmap)
         {
-            throw new NotImplementedException();
+            Grayscale grayscale = new(0.2125, 0.7154, 0.0721);
+            HomogenityEdgeDetector edgeDetector = new();
+            Bitmap grayImage = grayscale.Apply((Bitmap)bitmap.Clone());
+            edgeDetector.ApplyInPlace(grayImage);
+            return grayImage;
         }
     }
 }
